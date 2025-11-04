@@ -13,7 +13,7 @@ export default function LoginPage() {
   const signIn = useAuthStore((state) => state.signIn);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     setError('');
     setLoading(true);
