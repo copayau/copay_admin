@@ -1,6 +1,8 @@
 // src/components/BlogForm.tsx
 import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { type Resolver } from 'react-hook-form';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
 import { blogSchema, type Blog, type BlogFormData } from '../types/blog.types';
@@ -33,7 +35,9 @@ export default function BlogForm({ blog }: BlogFormProps) {
     watch,
     setValue,
   } = useForm<BlogFormData>({
-    resolver: zodResolver(blogSchema.omit({ id: true, created_at: true, updated_at: true })),
+    resolver: zodResolver(
+      blogSchema.omit({ id: true, created_at: true, updated_at: true })
+    ) as Resolver<BlogFormData>,
     defaultValues: blog || {
       slug: '',
       category: '',

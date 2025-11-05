@@ -1,5 +1,4 @@
 import type { Property } from '../types/property.types';
-import { AiFillTablet } from 'react-icons/ai';
 import Table from '@/components/ui/Table.tsx';
 
 interface PropertyListProps {
@@ -34,36 +33,6 @@ export default function PropertyList({ properties, loading, onEdit, onDelete }: 
     {
       title: 'Actions',
       key: 'actions',
-    },
-  ];
-  const columns: TableColumn[] = [
-    { title: 'Name', key: 'name', sortable: true },
-    { title: 'Length', key: 'length' },
-    {
-      title: 'Year',
-      key: 'year',
-      sortable: true,
-      align: 'center',
-    },
-    {
-      title: 'Price',
-      key: 'price',
-      sortable: true,
-      align: 'right',
-      render: (value) => `$${value.toLocaleString()}`,
-    },
-    {
-      title: 'Status',
-      key: 'status',
-      render: (value) => (
-        <span
-          className={`px-2 py-1 rounded text-xs ${
-            value === 'available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-          }`}
-        >
-          {value}
-        </span>
-      ),
     },
   ];
   if (loading) {

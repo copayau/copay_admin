@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBlogStore } from '../store/blogStore';
 import Table, { type TableColumn } from '../components/ui/Table';

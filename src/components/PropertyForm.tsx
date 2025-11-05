@@ -4,6 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { propertySchema, type Property, type PropertyFormData } from '../types/property.types';
 import { usePropertyStore } from '@/store/propertyStore';
+import { type Resolver } from 'react-hook-form';
 
 interface PropertyFormProps {
   property: Property | null;
@@ -20,7 +21,9 @@ export default function PropertyForm({ property, onClose }: PropertyFormProps) {
     formState: { errors },
     reset,
   } = useForm<PropertyFormData>({
-    resolver: zodResolver(propertySchema.omit({ id: true, created_at: true, updated_at: true })),
+    resolver: zodResolver(
+      propertySchema.omit({ id: true, created_at: true, updated_at: true })
+    ) as Resolver<PropertyFormData>,
     defaultValues: property || {
       title: '',
       status: 'draft',

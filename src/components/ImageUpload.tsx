@@ -15,7 +15,6 @@ export default function ImageUpload({
   onChange,
   onUpload,
   label = 'Upload Image',
-  folder = 'property-images',
   aspectRatio = '16/9',
   maxSize = 5,
 }: ImageUploadProps) {
