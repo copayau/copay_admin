@@ -46,23 +46,23 @@ const menuItems = [
       </svg>
     ),
   },
-  {
-    title: 'Boat Properties',
-    path: '/boat-properties',
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-        />
-      </svg>
-    ),
-  },
+  // {
+  //   title: 'Boat Properties',
+  //   path: '/boat-properties',
+  //   icon: (
+  //     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  //       <path
+  //         strokeLinecap="round"
+  //         strokeLinejoin="round"
+  //         strokeWidth={2}
+  //         d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+  //       />
+  //     </svg>
+  //   ),
+  // },
   {
     title: 'Blog',
-    path: '/blog',
+    path: '/blogs',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -76,7 +76,7 @@ const menuItems = [
     subItems: [
       { title: 'Create Post', path: '/blog/create' },
       { title: 'Update Post', path: '/blog/update' },
-      { title: 'All Posts', path: '/blog/all' },
+      { title: 'All Posts', path: '/blogs' },
     ],
   },
 ];
@@ -123,27 +123,11 @@ export default function AdminLayout() {
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-between p-4 border-b border-slate-200">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
             {sidebarOpen ? (
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-slate-800">RealEstate</h2>
-                  <p className="text-xs text-slate-500">Admin Panel</p>
+              <div className="flex items-center">
+                <div className="pt-2">
+                  <img src="/logo.svg" className="h-16 w-56" />
                 </div>
               </div>
             ) : (

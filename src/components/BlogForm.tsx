@@ -1,0 +1,309 @@
+// src/components/BlogForm.tsx
+import { useEffect, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from 'react-router-dom';
+import { blogSchema, type Blog, type BlogFormData } from '../types/blog.types';
+import { useBlogStore } from '../store/blogStore';
+import ImageUpload from './ImageUpload';
+
+interface BlogFormProps {
+  blog: Blog | null;
+}
+
+const categories = [
+  { id: 'adventure', name: 'Adventure', slug: 'adventure' },
+  { id: 'real-estate', name: 'Real Estate', slug: 'real-estate' },
+  { id: 'investment', name: 'Investment', slug: 'investment' },
+  { id: 'lifestyle', name: 'Lifestyle', slug: 'lifestyle' },
+  { id: 'technology', name: 'Technology', slug: 'technology' },
+];
+
+export default function BlogForm({ blog }: BlogFormProps) {
+  const navigate = useNavigate();
+  const { createBlog, updateBlog, uploadImage, loading } = useBlogStore();
+  const [selectedCategory, setSelectedCategory] = useState(blog?.categoryId || '');
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+    watch,
+    setValue,
+  } = useForm<BlogFormData>({
+    resolver: zodResolver(blogSchema.omit({ id: true, created_at: true, updated_at: true })),
+    defaultValues: blog || {
+      slug: '',
+      category: '',
+      categoryId: '',
+      title: '',
+      excerpt: '',
+      image: '',
+      date: '',
+      readTime: '',
+      content: '',
+      relatedPosts: [],
+      published: false,
+    },
+  });
+
+  const title = watch('title');
+
+  useEffect(() => {
+    if (blog) {
+      reset(blog);
+      setSelectedCategory(blog.categoryId);
+    }
+  }, [blog, reset]);
+
+  // Auto-generate slug from title
+  useEffect(() => {
+    if (!blog && title) {
+      const slug = title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+      setValue('slug', slug);
+    }
+  }, [title, blog, setValue]);
+
+  const onSubmit = async (data: BlogFormData) => {
+    try {
+      if (blog?.id) {
+        await updateBlog(blog.id, data);
+        alert('Blog post updated successfully!');
+      } else {
+        await createBlog(data);
+        alert('Blog post created successfully!');
+        navigate('/blog/all');
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      alert('Failed to save blog post');
+    }
+  };
+
+  const handleCategoryChange = (categoryId: string) => {
+    const category = categories.find((c) => c.id === categoryId);
+    if (category) {
+      setSelectedCategory(categoryId);
+      setValue('categoryId', categoryId);
+      setValue('category', category.name);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-6">
+        {/* Basic Information */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-slate-800">Basic Information</h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Title */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">Title *</label>
+              <input
+                {...register('title')}
+                type="text"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Your blog post title..."
+              />
+              {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
+            </div>
+
+            {/* Slug */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Slug * <span className="text-slate-500 font-normal">(URL-friendly)</span>
+              </label>
+              <input
+                {...register('slug')}
+                type="text"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="your-blog-post-slug"
+              />
+              {errors.slug && <p className="mt-1 text-sm text-red-600">{errors.slug.message}</p>}
+            </div>
+
+            {/* Category */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Category *</label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+              {errors.category && (
+                <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>
+              )}
+            </div>
+
+            {/* Read Time */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Read Time</label>
+              <input
+                {...register('readTime')}
+                type="text"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="5 min read"
+              />
+            </div>
+
+            {/* Date */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Date</label>
+              <input
+                {...register('date')}
+                type="text"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="March 16, 2025"
+              />
+            </div>
+
+            {/* Excerpt */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Excerpt * <span className="text-slate-500 font-normal">(Short description)</span>
+              </label>
+              <textarea
+                {...register('excerpt')}
+                rows={3}
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Brief summary of your blog post..."
+              />
+              {errors.excerpt && (
+                <p className="mt-1 text-sm text-red-600">{errors.excerpt.message}</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Featured Image */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-slate-800">Featured Image</h3>
+
+          <Controller
+            name="image"
+            control={control}
+            render={({ field }) => (
+              <ImageUpload
+                value={field.value}
+                onChange={field.onChange}
+                onUpload={(file) => uploadImage(file, 'property-images')}
+                label="Upload Featured Image"
+                aspectRatio="16/9"
+              />
+            )}
+          />
+          {errors.image && <p className="text-sm text-red-600">{errors.image.message}</p>}
+        </div>
+
+        {/* Content */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-slate-800">Content</h3>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Blog Content * <span className="text-slate-500 font-normal">(HTML supported)</span>
+            </label>
+            <textarea
+              {...register('content')}
+              rows={20}
+              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+              placeholder="<h2>Your Heading</h2><p>Your content here...</p>"
+            />
+            {errors.content && (
+              <p className="mt-1 text-sm text-red-600">{errors.content.message}</p>
+            )}
+            <p className="mt-2 text-xs text-slate-500">
+              Tip: Use HTML tags for formatting. Example: &lt;h2&gt;, &lt;p&gt;, &lt;strong&gt;,
+              etc.
+            </p>
+          </div>
+        </div>
+
+        {/* Publishing */}
+        <div className="space-y-4 pt-6 border-t border-slate-200">
+          <h3 className="text-lg font-semibold text-slate-800">Publishing</h3>
+
+          <div className="flex items-center">
+            <Controller
+              name="published"
+              control={control}
+              render={({ field }) => (
+                <input
+                  type="checkbox"
+                  checked={field.value}
+                  onChange={field.onChange}
+                  className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                />
+              )}
+            />
+            <label className="ml-2 text-sm font-medium text-slate-700">Publish this post</label>
+          </div>
+        </div>
+
+        {/* Form Actions */}
+        <div className="flex justify-between items-center pt-6 border-t border-slate-200">
+          <button
+            type="button"
+            onClick={() => navigate('/blog/all')}
+            className="px-6 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors"
+          >
+            Cancel
+          </button>
+
+          <div className="flex gap-3">
+            {blog && (
+              <button
+                type="button"
+                onClick={() => {
+                  setValue('published', false);
+                  handleSubmit(onSubmit)();
+                }}
+                disabled={loading}
+                className="px-6 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
+              >
+                Save as Draft
+              </button>
+            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            >
+              {loading && (
+                <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+              )}
+              <span>{blog ? 'Update Post' : 'Create Post'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  );
+}
