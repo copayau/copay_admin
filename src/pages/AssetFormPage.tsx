@@ -1,9 +1,9 @@
 // src/pages/AssetFormPage.tsx
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, type SubmitHandler, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { assetSchema, type AssetFormData } from '../types/asset.types';
+import { assetFormSchema, type AssetFormData } from '../types/asset.types';
 import { useAssetStore } from '@/store/assetStore';
 import { useCategoryStore } from '@/store/categoryStore';
 import CompactImageUpload from '@/components/CompactImageUpload';
@@ -26,7 +26,7 @@ const uploadAssetImage = async (file: File): Promise<string> => {
 
   const {
     data: { publicUrl },
-  } = supabase.storage.from('images').getPublicUrl(filePath);
+  } = supabase.storage.from('property-images').getPublicUrl(filePath);
 
   return publicUrl;
 };
@@ -49,7 +49,7 @@ export default function AssetFormPage() {
     watch,
     setValue,
   } = useForm<AssetFormData>({
-    resolver: zodResolver(assetSchema.omit({ id: true, created_at: true, updated_at: true })),
+    resolver: zodResolver(assetFormSchema) as unknown as Resolver<AssetFormData>,
     defaultValues: {
       category_id: '',
       title: '',
@@ -217,18 +217,20 @@ export default function AssetFormPage() {
     }
   };
 
-  const onSubmit = async (data: AssetFormData) => {
+  const onSubmit: SubmitHandler<AssetFormData> = async (data) => {
     try {
-      const assetData = {
+      // Merge dynamic fields, then parse with schema to apply defaults and ensure types
+      const toValidate = {
         ...data,
         dynamic_data: dynamicFieldValues,
       };
+      const parsed = assetFormSchema.parse(toValidate);
 
       if (id) {
-        await updateAsset(id, assetData);
+        await updateAsset(id, parsed);
         alert('Asset updated successfully!');
       } else {
-        await createAsset(assetData);
+        await createAsset(parsed);
         alert('Asset created successfully!');
       }
       navigate('/assets');

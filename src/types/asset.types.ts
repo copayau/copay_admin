@@ -53,6 +53,9 @@ export const assetSchema = z.object({
   updated_at: z.string().optional(),
 });
 
+export const assetFormSchema = assetSchema.omit({ id: true, created_at: true, updated_at: true });
+
 export type Asset = z.infer<typeof assetSchema>;
 export type AssetStatus = z.infer<typeof AssetStatusEnum>;
-export type AssetFormData = Omit<Asset, 'id' | 'created_at' | 'updated_at'>;
+export type AssetFormData = z.input<typeof assetFormSchema>;
+export type AssetFormParsed = z.infer<typeof assetFormSchema>;
