@@ -441,6 +441,14 @@ export default function CategoryForm({ category, onClose }: CategoryFormProps) {
                 </div>
               )}
             </section>
+            {dynamicFields.length > 0 && (
+              <div
+                onClick={addDynamicField}
+                className="text-center text-xl cursor-pointer text-blue-600"
+              >
+                Add more field
+              </div>
+            )}
           </div>
 
           {/* Footer */}
