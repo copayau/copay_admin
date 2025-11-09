@@ -8,6 +8,9 @@ import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
 import BlogAllPage from '@/pages/BlogAllPage.tsx';
 import BlogCreatePage from '@/pages/BlogCreatePage.tsx';
 import BlogUpdatePage from '@/pages/BlogUpadatePage.tsx';
+import AssetsPage from '@/pages/AssetsPage.tsx';
+import CategoriesPage from '@/pages/CategoriesPage.tsx';
+import AssetFormPage from '@/pages/AssetFormPage.tsx';
 
 function App() {
   return (
@@ -23,6 +26,9 @@ function App() {
         >
           <Route path="/" element={<Dashboard />} />
           <Route path="/properties" element={<PropertiesPage />} />
+          <Route path="/assets" element={<AssetsPage />} />
+          <Route path="/assets/create" element={<AssetFormPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/blogs" element={<BlogAllPage />} />
           <Route path="/blog/create" element={<BlogCreatePage />} />
           <Route path="/blog/update" element={<BlogUpdatePage />} />
