@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { supabase } from '@/services/supabase/client';
-import type { Category, DynamicField } from '../types/category.types';
+import type { Category } from '../types/category.types';
 
 interface CategoryState {
   categories: Category[];

@@ -1,3 +1,5 @@
+import React, { useState, useRef } from 'react';
+
 interface CompactImageUploadProps {
   value?: string[];
   onChange: (urls: string[]) => void;
@@ -255,7 +257,6 @@ export default function CompactImageUpload({
 
 // src/components/ImageUpload/CompactSingleImageUpload.tsx
 // For single image upload (like feature image)
-import { useState, useRef } from 'react';
 
 interface CompactSingleImageUploadProps {
   value?: string;

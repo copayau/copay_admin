@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
 import Dashboard from './pages';
-import PropertiesPage from '@/pages/PropertiesPage.tsx';
 // import DefaultLayout from '@/layouts/default';
 import AdminLayout from '@/layouts/AdminLayout.tsx';
 import LoginPage from '@/pages/auth/login.tsx';
@@ -25,7 +24,6 @@ function App() {
           }
         >
           <Route path="/" element={<Dashboard />} />
-          <Route path="/properties" element={<PropertiesPage />} />
           <Route path="/assets" element={<AssetsPage />} />
           <Route path="/assets/create" element={<AssetFormPage />} />
           <Route path="/categories" element={<CategoriesPage />} />

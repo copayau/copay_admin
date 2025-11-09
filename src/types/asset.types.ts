@@ -31,7 +31,7 @@ export const assetSchema = z.object({
   area: z.string().optional(),
 
   // Dynamic data
-  dynamic_data: z.record(z.any()).default({}),
+  dynamic_data: z.record(z.string(), z.any()).default({}),
 
   // Status
   status: AssetStatusEnum.default('draft'),
