@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 import { Upload, X, ZoomIn } from 'lucide-react';
 
 interface ImageUploadProps {
-  value: string;
+  value: string | undefined;
   onChange: (value: string) => void;
   onUpload: (file: File) => Promise<string>;
   label?: string;
