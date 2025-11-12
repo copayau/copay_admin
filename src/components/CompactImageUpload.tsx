@@ -40,16 +40,27 @@ export default function CompactImageUpload({
     setUploadProgress(0);
 
     try {
+      // Show preview immediately for each file
+      const previewUrls: string[] = [];
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          previewUrls.push(reader.result as string);
+          if (previewUrls.length === files.length) {
+            onChange([...value, ...previewUrls]);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Validate and upload
       const uploadPromises = files.map(async (file) => {
-        // Validate
         if (!file.type.startsWith('image/')) {
           throw new Error('Only image files allowed');
         }
         if (file.size > maxSize * 1024 * 1024) {
           throw new Error(`File size must be less than ${maxSize}MB`);
         }
-
-        // Upload
         return await onUpload(file);
       });
 
@@ -62,7 +73,9 @@ export default function CompactImageUpload({
       clearInterval(interval);
       setUploadProgress(100);
 
-      onChange([...value, ...urls]);
+      // Replace preview URLs with actual URLs
+      const currentWithoutPreviews = value.filter((url) => !url.startsWith('data:'));
+      onChange([...currentWithoutPreviews, ...urls]);
 
       setTimeout(() => {
         setUploadProgress(0);
@@ -109,7 +122,10 @@ export default function CompactImageUpload({
             {/* Remove button */}
             <button
               type="button"
-              onClick={() => handleRemove(index)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemove(index);
+              }}
               className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
             >
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +139,7 @@ export default function CompactImageUpload({
             </button>
 
             {/* Preview icon */}
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center pointer-events-none">
               <svg
                 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity"
                 fill="none"
@@ -255,9 +271,7 @@ export default function CompactImageUpload({
   );
 }
 
-// src/components/ImageUpload/CompactSingleImageUpload.tsx
-// For single image upload (like feature image)
-
+// Single Image Upload Component
 interface CompactSingleImageUploadProps {
   value?: string;
   onChange: (url: string) => void;
@@ -294,6 +308,13 @@ export function CompactSingleImageUpload({
       setError(`File size must be less than ${maxSize}MB`);
       return;
     }
+
+    // Show preview immediately
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      onChange(reader.result as string);
+    };
+    reader.readAsDataURL(file);
 
     setUploading(true);
     setUploadProgress(0);
@@ -350,7 +371,10 @@ export function CompactSingleImageUpload({
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      fileInputRef.current?.click();
+                    }}
                     className="p-1.5 bg-white text-slate-700 rounded hover:bg-slate-100 transition-colors"
                     title="Change"
                   >
@@ -365,7 +389,10 @@ export function CompactSingleImageUpload({
                   </button>
                   <button
                     type="button"
-                    onClick={handleRemove}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemove();
+                    }}
                     className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                     title="Remove"
                   >
