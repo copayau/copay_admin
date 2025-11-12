@@ -9,6 +9,7 @@ import { blogSchema, type Blog, type BlogFormData } from '../types/blog.types';
 import { useBlogStore } from '../store/blogStore';
 import ImageUpload from './ImageUpload';
 import RichTextEditor from './RichTextEditor';
+import { useSnackbar } from './Snackbar';
 
 interface BlogFormProps {
   blog: Blog | null;
@@ -26,6 +27,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
   const navigate = useNavigate();
   const { createBlog, updateBlog, uploadImage, loading } = useBlogStore();
   const [selectedCategory, setSelectedCategory] = useState(blog?.categoryId || '');
+  const { showSnackbar } = useSnackbar();
 
   const {
     register,
@@ -63,7 +65,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
     }
   }, [blog, reset]);
 
-  // Auto-generate slug from title
   useEffect(() => {
     if (!blog && title) {
       const slug = title
@@ -78,16 +79,21 @@ export default function BlogForm({ blog }: BlogFormProps) {
     try {
       if (blog?.id) {
         await updateBlog(blog.id, data);
-        alert('Blog post updated successfully!');
+        showSnackbar('Blog post updated successfully!', 'success');
       } else {
         await createBlog(data);
-        alert('Blog post created successfully!');
+        showSnackbar('Blog post created successfully!', 'success');
         navigate('/blog/all');
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      alert('Failed to save blog post');
+      showSnackbar('Failed to save blog post', 'error');
     }
+  };
+
+  const onError = (errors: any) => {
+    console.log('Validation errors:', errors);
+    showSnackbar('Please fill in all required fields', 'error');
   };
 
   const handleCategoryChange = (categoryId: string) => {
@@ -100,14 +106,27 @@ export default function BlogForm({ blog }: BlogFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6">
       <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-6">
-        {/* Basic Information */}
+        {Object.keys(errors).length > 0 && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <h4 className="text-sm font-semibold text-red-800 mb-2">
+              Please fix the following errors:
+            </h4>
+            <ul className="text-sm text-red-700 space-y-1">
+              {Object.entries(errors).map(([field, error]: [string, any]) => (
+                <li key={field}>
+                  • {field}: {error.message}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-slate-800">Basic Information</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Title */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-2">Title *</label>
               <input
@@ -119,7 +138,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
               {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
             </div>
 
-            {/* Slug */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 Slug * <span className="text-slate-500 font-normal">(URL-friendly)</span>
@@ -133,7 +151,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
               {errors.slug && <p className="mt-1 text-sm text-red-600">{errors.slug.message}</p>}
             </div>
 
-            {/* Category */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Category *</label>
               <select
@@ -153,7 +170,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
               )}
             </div>
 
-            {/* Read Time */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Read Time</label>
               <input
@@ -164,7 +180,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
               />
             </div>
 
-            {/* Date */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Date</label>
               <input
@@ -175,7 +190,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
               />
             </div>
 
-            {/* Excerpt */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 Excerpt * <span className="text-slate-500 font-normal">(Short description)</span>
@@ -193,7 +207,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
           </div>
         </div>
 
-        {/* Featured Image */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-slate-800">Featured Image</h3>
 
@@ -213,7 +226,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
           {errors.image && <p className="text-sm text-red-600">{errors.image.message}</p>}
         </div>
 
-        {/* Content - Rich Text Editor */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-slate-800">Content</h3>
 
@@ -223,7 +235,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
               name="content"
               control={control}
               render={({ field }) => (
-                <RichTextEditor content={field.value} onChange={field.onChange} />
+                <RichTextEditor content={field.value || ''} onChange={field.onChange} />
               )}
             />
             {errors.content && (
@@ -236,7 +248,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
           </div>
         </div>
 
-        {/* Publishing */}
         <div className="space-y-4 pt-6 border-t border-slate-200">
           <h3 className="text-lg font-semibold text-slate-800">Publishing</h3>
 
@@ -257,7 +268,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
           </div>
         </div>
 
-        {/* Form Actions */}
         <div className="flex justify-between items-center pt-6 border-t border-slate-200">
           <button
             type="button"
@@ -271,9 +281,9 @@ export default function BlogForm({ blog }: BlogFormProps) {
             {blog && (
               <button
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   setValue('published', false);
-                  handleSubmit(onSubmit)();
+                  await handleSubmit(onSubmit, onError)();
                 }}
                 disabled={loading}
                 className="px-6 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"

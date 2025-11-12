@@ -17,7 +17,6 @@ export const blogSchema = z.object({
   date: z.string().optional(),
   readTime: z.string().optional(),
   content: z.string().min(50, 'Content must be at least 50 characters'),
-  relatedPosts: z.array(z.number()).optional().default([]),
   published: z.boolean().default(false),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
