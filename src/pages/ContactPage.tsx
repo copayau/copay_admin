@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useContactStore, type ContactType } from '@/store/contactStore.ts';
 import Table, { type TableColumn } from '@/components/ui/Table';
 
