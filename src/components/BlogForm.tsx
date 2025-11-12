@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { blogSchema, type Blog, type BlogFormData } from '../types/blog.types';
 import { useBlogStore } from '../store/blogStore';
 import ImageUpload from './ImageUpload';
+import RichTextEditor from './RichTextEditor';
 
 interface BlogFormProps {
   blog: Blog | null;
@@ -212,26 +213,25 @@ export default function BlogForm({ blog }: BlogFormProps) {
           {errors.image && <p className="text-sm text-red-600">{errors.image.message}</p>}
         </div>
 
-        {/* Content */}
+        {/* Content - Rich Text Editor */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-slate-800">Content</h3>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Blog Content * <span className="text-slate-500 font-normal">(HTML supported)</span>
-            </label>
-            <textarea
-              {...register('content')}
-              rows={20}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-              placeholder="<h2>Your Heading</h2><p>Your content here...</p>"
+            <label className="block text-sm font-medium text-slate-700 mb-2">Blog Content *</label>
+            <Controller
+              name="content"
+              control={control}
+              render={({ field }) => (
+                <RichTextEditor content={field.value} onChange={field.onChange} />
+              )}
             />
             {errors.content && (
               <p className="mt-1 text-sm text-red-600">{errors.content.message}</p>
             )}
             <p className="mt-2 text-xs text-slate-500">
-              Tip: Use HTML tags for formatting. Example: &lt;h2&gt;, &lt;p&gt;, &lt;strong&gt;,
-              etc.
+              Use the toolbar above to format your content. Add headings, lists, links, and more
+              with just a click.
             </p>
           </div>
         </div>
