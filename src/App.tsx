@@ -10,6 +10,7 @@ import BlogUpdatePage from '@/pages/BlogUpadatePage.tsx';
 import AssetsPage from '@/pages/AssetsPage.tsx';
 import CategoriesPage from '@/pages/CategoriesPage.tsx';
 import AssetFormPage from '@/pages/AssetFormPage.tsx';
+import ContactPage from '@/pages/ContactPage.tsx';
 
 function App() {
   return (
@@ -26,10 +27,12 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/assets" element={<AssetsPage />} />
           <Route path="/assets/create" element={<AssetFormPage />} />
+          <Route path="/assets/edit/:id" element={<AssetFormPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
+          <Route path="/updates/contacts" element={<ContactPage />} />
           <Route path="/blogs" element={<BlogAllPage />} />
           <Route path="/blog/create" element={<BlogCreatePage />} />
-          <Route path="/blog/update" element={<BlogUpdatePage />} />
+          <Route path="/blog/update/:slug" element={<BlogUpdatePage />} />
         </Route>
       </Routes>
     </>

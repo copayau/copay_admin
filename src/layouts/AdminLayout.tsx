@@ -47,8 +47,8 @@ const menuItems = [
     ),
   },
   {
-    title: 'Interest',
-    path: '/interest',
+    title: 'Updates Received',
+    path: '/updates/contacts',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -59,21 +59,12 @@ const menuItems = [
         />
       </svg>
     ),
+    subItems: [
+      { title: 'Contacts', path: '/updates/contacts' },
+      { title: 'Interest', path: '/updates/interest' },
+      { title: 'Subscription', path: '/updates/subscription' },
+    ],
   },
-  // {
-  //   title: 'Boat Properties',
-  //   path: '/boat-properties',
-  //   icon: (
-  //     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-  //       <path
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //         strokeWidth={2}
-  //         d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-  //       />
-  //     </svg>
-  //   ),
-  // },
   {
     title: 'Blog',
     path: '/blogs',

@@ -1,43 +1,41 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { supabase } from '@/services/supabase/client';
-interface InterestType {
+export interface ContactType {
   id: string;
-  full_name: string;
+  name: string;
   email: string;
-  budget_range?: string | null;
-  expected_usages?: string | null;
-  city?: string | null;
+  message: string;
   created_at: string;
-  phone?: number | null;
+  phone_number?: number | null;
   interest?: string | null;
 }
-interface InterestState {
-  interests: InterestType[];
+interface ContactState {
+  contacts: ContactType[];
   loading: boolean;
   error: string | null;
-  fetchInterest: () => Promise<void>;
-  deleteInterest: (id: string) => Promise<void>;
+  fetchContacts: () => Promise<void>;
+  deleteContact: (id: string) => Promise<void>;
   clearError: () => void;
 }
 
-export const useInterestStore = create<InterestState>()(
+export const useContactStore = create<ContactState>()(
   devtools(
     (set, get) => ({
       contacts: [],
       loading: false,
       error: null,
 
-      fetchInterest: async () => {
+      fetchContacts: async () => {
         set({ loading: true, error: null });
         try {
           const { data, error } = await supabase
-            .from('interest_registration')
+            .from('contact_submissions')
             .select('*')
-            .order('created_at', { ascending: true });
+            .order('created_at', { ascending: false });
 
           if (error) throw error;
-          set({ interests: data || [], loading: false });
+          set({ contacts: data || [], loading: false });
         } catch (error) {
           set({
             error: error instanceof Error ? error.message : 'Failed to fetch categories',
@@ -45,15 +43,15 @@ export const useInterestStore = create<InterestState>()(
           });
         }
       },
-      deleteInterest: async (id: string) => {
+      deleteContact: async (id: string) => {
         set({ loading: true, error: null });
         try {
-          const { error } = await supabase.from('interest_registration').delete().eq('id', id);
+          const { error } = await supabase.from('contact_submissions').delete().eq('id', id);
 
           if (error) throw error;
 
           set({
-            interests: get().interests.filter((c) => c.id !== id),
+            contacts: get().contacts.filter((c) => c.id !== id),
             loading: false,
           });
         } catch (error) {
@@ -65,6 +63,6 @@ export const useInterestStore = create<InterestState>()(
 
       clearError: () => set({ error: null }),
     }),
-    { name: 'InterestStore' }
+    { name: 'ContactStore' }
   )
 );
