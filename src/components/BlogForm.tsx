@@ -1,7 +1,7 @@
 // src/components/BlogForm.tsx
 import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { type Resolver } from 'react-hook-form';
+import { type Resolver, type SubmitHandler } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
@@ -51,7 +51,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
       date: '',
       readTime: '',
       content: '',
-      relatedPosts: [],
       published: false,
     },
   });
@@ -60,7 +59,18 @@ export default function BlogForm({ blog }: BlogFormProps) {
 
   useEffect(() => {
     if (blog) {
-      reset(blog);
+      reset({
+        slug: blog.slug,
+        category: blog.category,
+        categoryId: blog.categoryId,
+        title: blog.title,
+        excerpt: blog.excerpt,
+        image: blog.image,
+        date: blog.date,
+        readTime: blog.readTime,
+        content: blog.content,
+        published: blog.published ?? false,
+      });
       setSelectedCategory(blog.categoryId);
     }
   }, [blog, reset]);
@@ -75,7 +85,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
     }
   }, [title, blog, setValue]);
 
-  const onSubmit = async (data: BlogFormData) => {
+  const onSubmit: SubmitHandler<BlogFormData> = async (data) => {
     try {
       if (blog?.id) {
         await updateBlog(blog.id, data);

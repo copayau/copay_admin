@@ -1,5 +1,5 @@
 // src/components/Snackbar.tsx
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 
 type SnackbarType = 'success' | 'error' | 'info' | 'warning';
