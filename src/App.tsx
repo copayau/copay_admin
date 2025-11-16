@@ -12,6 +12,7 @@ import CategoriesPage from '@/pages/CategoriesPage.tsx';
 import AssetFormPage from '@/pages/AssetFormPage.tsx';
 import ContactPage from '@/pages/ContactPage.tsx';
 import { SnackbarProvider } from './components/Snackbar';
+import BrandImages from '@/components/Brand/BrandImage';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/blog/all" element={<BlogAllPage />} />
             <Route path="/blog/create" element={<BlogCreatePage />} />
             <Route path="/blog/update/:slug" element={<BlogUpdatePage />} />
+            <Route path="/brands" element={<BrandImages />} />
           </Route>
         </Routes>
       </SnackbarProvider>
