@@ -1,7 +1,7 @@
 // src/pages/AssetFormPage.tsx
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForm, Controller, type SubmitHandler, type Resolver } from 'react-hook-form';
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { assetFormSchema, type AssetFormData } from '../types/asset.types';
 import { useAssetStore } from '@/store/assetStore';
@@ -49,7 +49,7 @@ export default function AssetFormPage() {
     watch,
     setValue,
   } = useForm<AssetFormData>({
-    resolver: zodResolver(assetFormSchema) as unknown as Resolver<AssetFormData>,
+    resolver: zodResolver(assetFormSchema) as any,
     defaultValues: {
       category_id: '',
       title: '',
@@ -57,8 +57,8 @@ export default function AssetFormPage() {
       description: '',
       short_description: '',
       price: 0,
-      share_price_guide: 0,
-      total_shares: 0,
+      share_price_guide: undefined,
+      total_shares: undefined,
       feature_image: '',
       images: [],
       video_url: '',
@@ -70,7 +70,7 @@ export default function AssetFormPage() {
       location: '',
       area: '',
       dynamic_data: {},
-      status: 'draft',
+      status: 'draft' as const,
       published: false,
       featured: false,
       agent_name: '',
@@ -219,12 +219,15 @@ export default function AssetFormPage() {
 
   const onSubmit: SubmitHandler<AssetFormData> = async (data) => {
     try {
-      // Merge dynamic fields, then parse with schema to apply defaults and ensure types
+      console.log('Form submitted with data:', data); // Debug log
+
       const toValidate = {
         ...data,
         dynamic_data: dynamicFieldValues,
       };
+
       const parsed = assetFormSchema.parse(toValidate);
+      console.log('Parsed data:', parsed); // Debug log
 
       if (id) {
         await updateAsset(id, parsed);
@@ -233,10 +236,17 @@ export default function AssetFormPage() {
         await createAsset(parsed);
         alert('Asset created successfully!');
       }
+
       navigate('/assets');
     } catch (error) {
       console.error('Form submission error:', error);
-      alert('Failed to save asset');
+
+      // Better error handling for Zod validation errors
+      if (error instanceof Error) {
+        alert(`Failed to save asset: ${error.message}`);
+      } else {
+        alert('Failed to save asset');
+      }
     }
   };
 
