@@ -58,6 +58,7 @@ export const assetSchema = z.object({
   // SEO
   meta_title: emptyStringToUndefined,
   meta_description: emptyStringToUndefined,
+  keywords: emptyStringToUndefined,
   tags: z.array(z.string()).default([]),
 
   // Timestamps

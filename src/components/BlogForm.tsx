@@ -49,6 +49,9 @@ export default function BlogForm({ blog }: BlogFormProps) {
       excerpt: '',
       image: '',
       date: '',
+      meta_description: '',
+      meta_title: '',
+      keywords: '',
       readTime: '',
       content: '',
       published: false,
@@ -68,6 +71,9 @@ export default function BlogForm({ blog }: BlogFormProps) {
         image: blog.image,
         date: blog.date,
         readTime: blog.readTime,
+        meta_description: blog.meta_description,
+        meta_title: blog.meta_title,
+        keywords: blog.keywords,
         content: blog.content,
         published: blog.published ?? false,
       });
@@ -213,6 +219,39 @@ export default function BlogForm({ blog }: BlogFormProps) {
               {errors.excerpt && (
                 <p className="mt-1 text-sm text-red-600">{errors.excerpt.message}</p>
               )}
+            </div>
+            <div className="my-4 text-xl font-medium  col-span-2">Information for SEO</div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Meta Title</label>
+              <input
+                {...register('meta_title')}
+                type="text"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="title for seo"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Meta Description
+              </label>
+              <input
+                {...register('meta_description')}
+                type="text"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Description for seo"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Keywords <span className="text-slate-500 font-normal">(for Seo )</span>
+              </label>
+              <textarea
+                {...register('keywords')}
+                rows={2}
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Brief summary of your blog post..."
+              />
             </div>
           </div>
         </div>

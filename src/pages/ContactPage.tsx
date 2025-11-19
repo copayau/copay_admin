@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useContactStore, type ContactType } from '@/store/contactStore.ts';
 import Table, { type TableColumn } from '@/components/ui/Table';
+import dayjs from 'dayjs';
 
 export default function ContactPage() {
   const { contacts, loading, error, fetchContacts, deleteContact } = useContactStore();
@@ -61,11 +62,11 @@ export default function ContactPage() {
       render: (_, row) => <div>{row.phone_number || 'Not added'}</div>,
     },
     {
-      title: 'location',
-      key: 'location',
+      title: 'Created At',
+      key: 'created_at',
       sortable: true,
       align: 'center',
-      render: (value) => <div>{value || 'Not added'}</div>,
+      render: (value) => <div>{dayjs(value).format('DD MMM YYYY') || 'Not added'}</div>,
     },
     {
       title: 'Actions',

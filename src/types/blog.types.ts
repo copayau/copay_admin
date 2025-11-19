@@ -19,6 +19,9 @@ export const blogSchema = z.object({
   content: z.string().min(50, 'Content must be at least 50 characters'),
   published: z.boolean().default(false),
   created_at: z.string().optional(),
+  meta_title: z.string().optional(),
+  meta_description: z.string().optional(),
+  keywords: z.string().optional(),
   updated_at: z.string().optional(),
 });
 

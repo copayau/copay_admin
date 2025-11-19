@@ -623,6 +623,48 @@ export default function AssetFormPage() {
             </div>
           </section>
 
+          {/* Meta For Seo */}
+
+          <section className="space-y-4 pb-6 border-b border-slate-200">
+            <h4 className="text-lg font-semibold text-slate-800">Information for SEO</h4>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Meta title</label>
+                <input
+                  {...register('meta_title')}
+                  type="text"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Title for SEO"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Meta Description
+                </label>
+                <input
+                  {...register('meta_description')}
+                  type="text"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Description for SEO"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Keywords (comma-separated)
+                </label>
+                <input
+                  {...register('keywords')}
+                  type="text"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="keywords for SEO"
+                />
+              </div>
+            </div>
+          </section>
+
           {/* Publishing */}
           <section className="space-y-4">
             <h4 className="text-lg font-semibold text-slate-800">Publishing</h4>
