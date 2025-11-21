@@ -13,6 +13,7 @@ import AssetFormPage from '@/pages/AssetFormPage.tsx';
 import ContactPage from '@/pages/ContactPage.tsx';
 import { SnackbarProvider } from './components/Snackbar';
 import BrandImages from '@/components/Brand/BrandImage';
+import InterestPage from '@/pages/InterestPage.tsx';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/assets/edit/:id" element={<AssetFormPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/updates/contacts" element={<ContactPage />} />
+            <Route path="/updates/interest" element={<InterestPage />} />
             <Route path="/blogs" element={<BlogAllPage />} />
             <Route path="/blog/all" element={<BlogAllPage />} />
             <Route path="/blog/create" element={<BlogCreatePage />} />

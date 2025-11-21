@@ -43,6 +43,7 @@ export default function AssetFormPage() {
   const {
     register,
     handleSubmit,
+
     control,
     formState: { errors },
     reset,
@@ -61,7 +62,6 @@ export default function AssetFormPage() {
       total_shares: undefined,
       feature_image: '',
       images: [],
-      video_url: '',
       address: '',
       state: '',
       country: 'Australia',
@@ -81,6 +81,7 @@ export default function AssetFormPage() {
       tags: [],
     },
   });
+  console.log('errr', errors);
 
   const title = watch('title');
   const categoryId = watch('category_id');
@@ -375,17 +376,6 @@ export default function AssetFormPage() {
                       maxFiles={10}
                     />
                   )}
-                />
-              </div>
-
-              {/* Video URL */}
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Video URL</label>
-                <input
-                  {...register('video_url')}
-                  type="url"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="https://youtube.com/watch?v=..."
                 />
               </div>
             </div>

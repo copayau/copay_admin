@@ -24,7 +24,6 @@ export const propertySchema = z.object({
   garages: z.number().int().min(0, 'Garages must be 0 or more').optional(),
   features: z.array(z.string()).optional(),
   feature_image: z.string().url('Must be a valid URL').optional(),
-  video_url: z.string().url('Must be a valid URL').optional(),
   published: z.boolean().default(false),
   area: z.string().optional(),
   location: z.string().optional(),

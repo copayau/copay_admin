@@ -4,7 +4,8 @@ export const AssetStatusEnum = z.enum(['draft', 'available', 'pending', 'sold'])
 
 const emptyStringToUndefined = z
   .string()
-  .transform((val) => (val === '' ? undefined : val))
+  .nullable()
+  .transform((val) => (val === '' || val === null ? undefined : val))
   .optional();
 
 const urlOrEmpty = z
@@ -31,7 +32,6 @@ export const assetSchema = z.object({
   // Media
   feature_image: urlOrEmpty,
   images: z.array(z.string().url()).default([]),
-  video_url: urlOrEmpty,
 
   // Location
   address: emptyStringToUndefined,

@@ -32,7 +32,7 @@ export const useInterestStore = create<InterestState>()(
         set({ loading: true, error: null });
         try {
           const { data, error } = await supabase
-            .from('interest_registration')
+            .from('subscriptions')
             .select('*')
             .order('created_at', { ascending: true });
 
@@ -48,7 +48,7 @@ export const useInterestStore = create<InterestState>()(
       deleteInterest: async (id: string) => {
         set({ loading: true, error: null });
         try {
-          const { error } = await supabase.from('interest_registration').delete().eq('id', id);
+          const { error } = await supabase.from('subscriptions').delete().eq('id', id);
 
           if (error) throw error;
 
