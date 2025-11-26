@@ -43,13 +43,14 @@ export default function AssetFormPage() {
   const {
     register,
     handleSubmit,
+
     control,
     formState: { errors },
     reset,
     watch,
     setValue,
   } = useForm<AssetFormData>({
-    resolver: zodResolver(assetFormSchema),
+    resolver: zodResolver(assetFormSchema) as any,
     defaultValues: {
       category_id: '',
       title: '',
@@ -69,7 +70,7 @@ export default function AssetFormPage() {
       location: '',
       area: '',
       dynamic_data: {},
-      status: 'draft',
+      status: 'draft' as const,
       published: false,
       featured: false,
       agent_name: '',
@@ -77,11 +78,10 @@ export default function AssetFormPage() {
       company_name: '',
       meta_title: '',
       meta_description: '',
-      tags: [],
+      tags: '',
     },
   });
-
-  console.log('errors', errors);
+  console.log('errr', errors);
 
   const title = watch('title');
   const categoryId = watch('category_id');
@@ -220,7 +220,7 @@ export default function AssetFormPage() {
 
   const onSubmit: SubmitHandler<AssetFormData> = async (data) => {
     try {
-      console.log('Form submitted with data:', data);
+      console.log('Form submitted with data:', data); // Debug log
 
       const toValidate = {
         ...data,
@@ -228,7 +228,7 @@ export default function AssetFormPage() {
       };
 
       const parsed = assetFormSchema.parse(toValidate);
-      console.log('Parsed data:', parsed);
+      console.log('Parsed data:', parsed); // Debug log
 
       if (id) {
         await updateAsset(id, parsed);
@@ -242,6 +242,7 @@ export default function AssetFormPage() {
     } catch (error) {
       console.error('Form submission error:', error);
 
+      // Better error handling for Zod validation errors
       if (error instanceof Error) {
         alert(`Failed to save asset: ${error.message}`);
       } else {
@@ -612,7 +613,8 @@ export default function AssetFormPage() {
             </div>
           </section>
 
-          {/* Meta For SEO */}
+          {/* Meta For Seo */}
+
           <section className="space-y-4 pb-6 border-b border-slate-200">
             <h4 className="text-lg font-semibold text-slate-800">Information for SEO</h4>
 
