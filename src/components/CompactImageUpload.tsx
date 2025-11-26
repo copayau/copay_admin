@@ -4,6 +4,7 @@ interface CompactImageUploadProps {
   value?: string[];
   onChange: (urls: string[]) => void;
   onUpload: (file: File) => Promise<string>;
+  onDelete?: (url: string) => Promise<void>; // Add delete function
   label?: string;
   maxFiles?: number;
   maxSize?: number;
@@ -14,6 +15,7 @@ export default function CompactImageUpload({
   value = [],
   onChange,
   onUpload,
+  onDelete,
   label = 'Images',
   maxFiles = 10,
   maxSize = 5,
@@ -23,6 +25,7 @@ export default function CompactImageUpload({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,9 +95,27 @@ export default function CompactImageUpload({
     }
   };
 
-  const handleRemove = (index: number) => {
-    const newUrls = value.filter((_, i) => i !== index);
-    onChange(newUrls);
+  const handleRemove = async (index: number) => {
+    const urlToDelete = value[index];
+
+    // If onDelete function is provided and it's not a preview URL
+    if (onDelete && !urlToDelete.startsWith('data:')) {
+      try {
+        setDeleting(index);
+        await onDelete(urlToDelete);
+        const newUrls = value.filter((_, i) => i !== index);
+        onChange(newUrls);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to delete image');
+      } finally {
+        setDeleting(null);
+      }
+    } else {
+      // Just remove from state if no delete function or it's a preview
+      const newUrls = value.filter((_, i) => i !== index);
+      onChange(newUrls);
+    }
   };
 
   const handlePreview = (url: string) => {
@@ -119,23 +140,42 @@ export default function CompactImageUpload({
               onClick={() => handlePreview(url)}
             />
 
-            {/* Remove button */}
+            {/* Remove button with loading state */}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 handleRemove(index);
               }}
-              className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+              disabled={deleting === index}
+              className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 disabled:bg-red-400"
             >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={3}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              {deleting === index ? (
+                <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+              ) : (
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              )}
             </button>
 
             {/* Preview icon */}
@@ -276,6 +316,7 @@ interface CompactSingleImageUploadProps {
   value?: string;
   onChange: (url: string) => void;
   onUpload: (file: File) => Promise<string>;
+  onDelete?: (url: string) => Promise<void>; // Add delete function
   label?: string;
   maxSize?: number;
 }
@@ -284,6 +325,7 @@ export function CompactSingleImageUpload({
   value,
   onChange,
   onUpload,
+  onDelete,
   label = 'Image',
   maxSize = 5,
 }: CompactSingleImageUploadProps) {
@@ -291,6 +333,7 @@ export function CompactSingleImageUpload({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -346,8 +389,25 @@ export function CompactSingleImageUpload({
     }
   };
 
-  const handleRemove = () => {
-    onChange('');
+  const handleRemove = async () => {
+    if (!value) return;
+
+    // If onDelete function is provided and it's not a preview URL
+    if (onDelete && !value.startsWith('data:')) {
+      try {
+        setDeleting(true);
+        await onDelete(value);
+        onChange('');
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to delete image');
+      } finally {
+        setDeleting(false);
+      }
+    } else {
+      // Just remove from state if no delete function or it's a preview
+      onChange('');
+    }
   };
 
   return (
@@ -375,7 +435,8 @@ export function CompactSingleImageUpload({
                       e.stopPropagation();
                       fileInputRef.current?.click();
                     }}
-                    className="p-1.5 bg-white text-slate-700 rounded hover:bg-slate-100 transition-colors"
+                    disabled={deleting}
+                    className="p-1.5 bg-white text-slate-700 rounded hover:bg-slate-100 transition-colors disabled:opacity-50"
                     title="Change"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -393,17 +454,41 @@ export function CompactSingleImageUpload({
                       e.stopPropagation();
                       handleRemove();
                     }}
-                    className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                    disabled={deleting}
+                    className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition-colors disabled:bg-red-400"
                     title="Remove"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
+                    {deleting ? (
+                      <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    )}
                   </button>
                 </div>
               </div>
