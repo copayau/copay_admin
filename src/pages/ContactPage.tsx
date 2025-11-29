@@ -56,6 +56,24 @@ export default function ContactPage() {
       ),
     },
     {
+      title: 'Source',
+      key: 'source',
+      sortable: false,
+      render: (_, row) => (
+        <div className="max-w-xl text-sm text-slate-600">{row?.source || 'No source'}</div>
+      ),
+    },
+    {
+      title: 'Property Name',
+      key: 'property_name',
+      sortable: false,
+      render: (_, row) => (
+        <div className="max-w-xl text-sm text-slate-600">
+          {row?.property_name || row?.form_name || 'No data'}
+        </div>
+      ),
+    },
+    {
       title: 'Phone Number',
       key: 'phone_number',
       sortable: false,

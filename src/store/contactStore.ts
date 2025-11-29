@@ -8,6 +8,9 @@ export interface ContactType {
   message: string;
   created_at: string;
   phone_number?: number | null;
+  source?: string | null;
+  property_name?: string | null;
+  form_name?: string | null;
   interest?: string | null;
 }
 interface ContactState {
