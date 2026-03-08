@@ -21,6 +21,7 @@ const categories = [
   { id: 'investment', name: 'Investment', slug: 'investment' },
   { id: 'lifestyle', name: 'Lifestyle', slug: 'lifestyle' },
   { id: 'technology', name: 'Technology', slug: 'technology' },
+  { id: 'news', name: 'News', slug: 'news' },
 ];
 
 export default function BlogForm({ blog }: BlogFormProps) {
