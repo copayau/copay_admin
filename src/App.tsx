@@ -8,6 +8,7 @@ import BlogAllPage from '@/pages/BlogAllPage.tsx';
 import BlogCreatePage from '@/pages/BlogCreatePage.tsx';
 import BlogUpdatePage from '@/pages/BlogUpadatePage.tsx';
 import AssetsPage from '@/pages/AssetsPage.tsx';
+import VideosPage from '@/pages/VideosPage.tsx';
 import CategoriesPage from '@/pages/CategoriesPage.tsx';
 import AssetFormPage from '@/pages/AssetFormPage.tsx';
 import ContactPage from '@/pages/ContactPage.tsx';
@@ -32,6 +33,7 @@ function App() {
             <Route path="/assets" element={<AssetsPage />} />
             <Route path="/assets/create" element={<AssetFormPage />} />
             <Route path="/assets/edit/:id" element={<AssetFormPage />} />
+            <Route path="/videos" element={<VideosPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/updates/contacts" element={<ContactPage />} />
             <Route path="/updates/interest" element={<InterestPage />} />
