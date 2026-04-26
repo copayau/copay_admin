@@ -21,22 +21,40 @@ export default function VideoForm({ video, onClose }: VideoFormProps) {
     control,
     formState: { errors },
   } = useForm<VideoFormData>({
-    defaultValues: video || {
-      title: '',
-      slug: '',
-      url: '',
-      thumbnail_url: '',
-      description: '',
-      category: 'podcast',
-      published: false,
-    },
+    defaultValues: video
+      ? {
+          title: video.title,
+          slug: video.slug,
+          url: video.url,
+          thumbnail_url: video.thumbnail_url || '',
+          description: video.description || '',
+          category: video.category,
+          published: video.published,
+        }
+      : {
+          title: '',
+          slug: '',
+          url: '',
+          thumbnail_url: '',
+          description: '',
+          category: 'podcast',
+          published: false,
+        },
   });
 
   const title = watch('title');
 
   useEffect(() => {
     if (video) {
-      reset(video);
+      reset({
+        title: video.title,
+        slug: video.slug,
+        url: video.url,
+        thumbnail_url: video.thumbnail_url || '',
+        description: video.description || '',
+        category: video.category,
+        published: video.published,
+      });
     }
   }, [video, reset]);
 
